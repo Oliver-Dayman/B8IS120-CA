@@ -9,7 +9,7 @@ namespace AerLingus.Controllers
 {
     public class ListFlightsController : Controller
     {
-        // GET: ListFlightsController hhh
+        // GET: ListFlightsController ggg
         public ActionResult Index()
         {
             return View();
