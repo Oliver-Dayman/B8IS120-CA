@@ -32,12 +32,12 @@ namespace AerLingus.DataTier
             while (dataReader.Read())
             {
                 Flight flight = new Flight();
+                flight.Carrier = "Aer Lingus";
                 flight.ID = dataReader.GetInt32(0);
                 flight.Reference = dataReader.GetString(1);
                 flight.Departure = dataReader.GetDateTime(2);
                 flight.Arrival = dataReader.GetDateTime(3);
                 flight.Price = dataReader.GetDecimal(4);
-                flight.Carrier = "Aer Lingus";
                 listFlights.Add(flight);
             }
             dataReader.Close();
