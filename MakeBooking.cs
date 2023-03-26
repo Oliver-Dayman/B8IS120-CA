@@ -19,8 +19,8 @@ namespace TravelAgent
     {
         public BusinessClass myBusinessClass { get; set; }
         string selectedCarrier = "";
-        int selectedDepartureId = 0;
-        int selectedReturnId = 0;
+        string selectedDepartureRef = "";
+        string selectedReturnRef = "";
         decimal selectedTotalPrice = 0;
         public MakeBooking()
         {
@@ -122,8 +122,8 @@ namespace TravelAgent
                 if (dgvFlights.SelectedRows[0].Cells[0].Value.ToString() == dgvReturns.SelectedRows[0].Cells[0].Value.ToString()) //ensuring both flights are for same carrier
                 {
                     selectedCarrier = dgvFlights.SelectedRows[0].Cells[0].Value.ToString();
-                    selectedDepartureId = (int)dgvFlights.SelectedRows[0].Cells[1].Value;
-                    selectedReturnId = (int)dgvReturns.SelectedRows[0].Cells[1].Value;
+                    selectedDepartureRef = dgvFlights.SelectedRows[0].Cells[2].Value.ToString();
+                    selectedReturnRef = dgvReturns.SelectedRows[0].Cells[2].Value.ToString();
                     selectedTotalPrice = (decimal)dgvFlights.SelectedRows[0].Cells[5].Value + (decimal)dgvReturns.SelectedRows[0].Cells[5].Value;
                     txtPrice.Text = selectedTotalPrice.ToString("F2");
                     pnlBookingHeader.Visible = true;
@@ -132,32 +132,87 @@ namespace TravelAgent
             }
         }
 
-        private void btnPay_Click(object sender, EventArgs e)
+        private async void btnPay_Click(object sender, EventArgs e)
         {
+            //Configure for appropriate systems
+            HttpClient bookingClient = new HttpClient();
+            switch (selectedCarrier)
+            {
+                case "Aer Lingus":
+                    bookingClient.BaseAddress = new Uri("https://localhost:44387");
+                    break;
+                case "Ryanair":
+                    bookingClient.BaseAddress = new Uri("https://localhost:44354");
+                    break;
+            }
+            HttpResponseMessage bookingResult;
 
+            HttpClient paymentClient = new HttpClient();
+            paymentClient.BaseAddress = new Uri("https://localhost:44387");  //needs to change once VISA project built....
+            HttpResponseMessage paymentResult;
 
+            //Assemble outward booking details
+            Booking outwardBooking = new Booking();
+            //outwardBooking.ID - identity on DB
+            outwardBooking.Name = txtName.Text;
+            outwardBooking.Address1 = txtAddress1.Text;
+            outwardBooking.Phone = txtPhone.Text;
+            outwardBooking.Email = txtEmail.Text;
+            outwardBooking.FlightRef = selectedDepartureRef;
+            outwardBooking.Price = selectedTotalPrice;
+            //outwardBooking.PayRef - null for now
 
+            //Assemble return booking details
+            Booking returnBooking = new Booking();
+            //outwardBooking.ID - identity on DB
+            returnBooking.Name = txtName.Text;
+            returnBooking.Address1 = txtAddress1.Text;
+            returnBooking.Phone = txtPhone.Text;
+            returnBooking.Email = txtEmail.Text;
+            returnBooking.FlightRef = selectedReturnRef;
+            returnBooking.Price = selectedTotalPrice;
+            //returnBooking.PayRef - null for now
 
+            //Assemble payment details
+            Payment currentPayment = new Payment();
+            //currentPayment.ID - identity on DB
+            currentPayment.Merchant = "Happy Travels";
+            currentPayment.Name = txtName.Text;
+            currentPayment.Card = txtCardNo.Text;
+            currentPayment.Expiry = txtExpiry.Text;
+            currentPayment.CVV = txtCVV.Text;
+            currentPayment.ExternalRef = selectedDepartureRef + " " + selectedReturnRef;
+            currentPayment.Price = selectedTotalPrice;
 
-            //Aer Lingus Web API
-            HttpClient aerlingusClient = new HttpClient();
-            aerlingusClient.BaseAddress = new Uri("https://localhost:44387");
-            HttpResponseMessage aerLingusResult;
-            string aerLingusContent;
+            ////////////////////////////////////////////////////////////
+            //Step 1: Create Bookings on Carrier System (2 for a return trip) - without Authorization Code - holds the bookings temporarily - only confirmed when Payment Ref is added
+            ////////////////////////////////////////////////////////////
 
-            //Retrieve Aer Lingus flights for departure
-            aerLingusResult = await aerlingusClient.GetAsync("ListFlights/Get/" + depDate);
-            aerLingusContent = await aerLingusResult.Content.ReadAsStringAsync();
+            //Post Outward Booking
+            bookingResult = await bookingClient.PostAsync("MakeBooking/Post/", outwardBooking);
+            //string aerLingusContent = await aerLingusResult.Content.ReadAsStringAsync();
+            //handling response/errors?
 
-            //Add to empty list for display in grid
-            List<Flight> availableFlights = JsonConvert.DeserializeObject<List<Flight>>(aerLingusContent);
+            //Post Return Booking
+            bookingResult = await bookingClient.PostAsync("MakeBooking/Post/", returnBooking);
+            //string aerLingusContent = await aerLingusResult.Content.ReadAsStringAsync();
+            //handling response/errors?
 
-            //Retrieve Aer Lingus flights for return
-            aerLingusResult = await aerlingusClient.GetAsync("ListFlights/Get/" + retDate);
-            aerLingusContent = await aerLingusResult.Content.ReadAsStringAsync();
+            ////////////////////////////////////////////////////////////
+            //Step 2: Create Payment record on VISA - if transaction fails then Carrier Booking will expire. If transaction succeeds then Payment Ref can be passed back to Carrier to commit transaction
+            ////////////////////////////////////////////////////////////
 
-            //Add to empty list for display in grid
-            List<Flight> returnFlights = JsonConvert.DeserializeObject<List<Flight>>(aerLingusContent);
+            //Post Payment
+            bookingResult = await bookingClient.PostAsync("MakePayment/Post/", currentPayment);
+            //string aerLingusContent = await aerLingusResult.Content.ReadAsStringAsync();
+            //handling response/errors?
+            //NEED TO ACCEPT BACK PAY REF INTO VARIABLE
+
+            ////////////////////////////////////////////////////////////
+            //Step 3: Update Booking with Payment Ref (on Carrier System)
+            ////////////////////////////////////////////////////////////
+
+            //NEED TO USE PAY REF AND UPDATE BOTH EXISTING BOOKINGS (OUTWARD AND RETURN)
         }
     }
 }

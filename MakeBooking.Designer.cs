@@ -75,7 +75,7 @@ namespace TravelAgent
             this.btnSearchFlights.Location = new System.Drawing.Point(98, 707);
             this.btnSearchFlights.Name = "btnSearchFlights";
             this.btnSearchFlights.Size = new System.Drawing.Size(159, 33);
-            this.btnSearchFlights.TabIndex = 0;
+            this.btnSearchFlights.TabIndex = 7;
             this.btnSearchFlights.Text = "Search Flights";
             this.btnSearchFlights.UseVisualStyleBackColor = false;
             this.btnSearchFlights.Click += new System.EventHandler(this.btnSearchFlights_Click);
@@ -242,7 +242,7 @@ namespace TravelAgent
             this.btnPay.Location = new System.Drawing.Point(148, 467);
             this.btnPay.Name = "btnPay";
             this.btnPay.Size = new System.Drawing.Size(152, 34);
-            this.btnPay.TabIndex = 16;
+            this.btnPay.TabIndex = 27;
             this.btnPay.Text = "Pay";
             this.btnPay.UseVisualStyleBackColor = true;
             this.btnPay.Click += new System.EventHandler(this.btnPay_Click);
