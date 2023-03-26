@@ -18,9 +18,15 @@ namespace TravelAgent
     public partial class MakeBooking : Form
     {
         public BusinessClass myBusinessClass { get; set; }
+        string selectedCarrier = "";
+        int selectedDepartureId = 0;
+        int selectedReturnId = 0;
+        decimal selectedTotalPrice = 0;
         public MakeBooking()
         {
             InitializeComponent();
+            pnlBookingHeader.Visible = false;
+            pnlBookingDetails.Visible = false;
         }
 
         private async void btnSearchFlights_Click(object sender, EventArgs e)
@@ -88,6 +94,42 @@ namespace TravelAgent
             //sort list by return date and bind to grid
             List<Flight> sortedReturnFlights = returnFlights.OrderBy(x => x.Departure).ToList();
             dgvReturns.DataSource = sortedReturnFlights;
+
+            //cosmetics
+            dgvFlights.Columns[1].Width = 60;
+            dgvFlights.Columns[2].Width = 100;
+            dgvFlights.Columns[5].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvFlights.Columns[3].Width = 200;
+            dgvFlights.Columns[4].Width = 200;
+            dgvFlights.Columns[5].Width = 100;
+            dgvFlights.Columns[5].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dgvFlights.Columns[5].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight;
+
+            dgvReturns.Columns[1].Width = 60;
+            dgvReturns.Columns[2].Width = 100;
+            dgvReturns.Columns[5].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvReturns.Columns[3].Width = 200;
+            dgvReturns.Columns[4].Width = 200;
+            dgvReturns.Columns[5].Width = 100;
+            dgvReturns.Columns[5].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dgvReturns.Columns[5].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight;
+        }
+
+        private void btnSelectFlights_Click(object sender, EventArgs e)
+        {
+            if ((dgvFlights.SelectedRows.Count == 1) && (dgvReturns.SelectedRows.Count == 1))
+            {
+                if (dgvFlights.SelectedRows[0].Cells[0].Value.ToString() == dgvReturns.SelectedRows[0].Cells[0].Value.ToString()) //ensuring both flights are for same carrier
+                {
+                    selectedCarrier = dgvFlights.SelectedRows[0].Cells[0].Value.ToString();
+                    selectedDepartureId = (int)dgvFlights.SelectedRows[0].Cells[1].Value;
+                    selectedReturnId = (int)dgvReturns.SelectedRows[0].Cells[1].Value;
+                    selectedTotalPrice = (decimal)dgvFlights.SelectedRows[0].Cells[5].Value + (decimal)dgvReturns.SelectedRows[0].Cells[5].Value;
+                    txtPrice.Text = selectedTotalPrice.ToString("F2");
+                    pnlBookingHeader.Visible = true;
+                    pnlBookingDetails.Visible = true;
+                }
+            }
         }
     }
 }

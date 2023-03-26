@@ -41,19 +41,20 @@ namespace TravelAgent
             this.panel2 = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
             this.pnlBookingDetails = new System.Windows.Forms.Panel();
+            this.txtName = new System.Windows.Forms.TextBox();
+            this.txtCVV = new System.Windows.Forms.TextBox();
+            this.txtExpiry = new System.Windows.Forms.TextBox();
+            this.txtCardNo = new System.Windows.Forms.TextBox();
+            this.btnPay = new System.Windows.Forms.Button();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.txtPrice = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.pnlBookingHeader = new System.Windows.Forms.Panel();
             this.label4 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.btnPay = new System.Windows.Forms.Button();
-            this.txtCardNo = new System.Windows.Forms.TextBox();
-            this.txtExpiry = new System.Windows.Forms.TextBox();
-            this.txtCVV = new System.Windows.Forms.TextBox();
-            this.txtName = new System.Windows.Forms.TextBox();
+            this.btnSelectFlights = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvFlights)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvReturns)).BeginInit();
             this.panel1.SuspendLayout();
@@ -65,7 +66,7 @@ namespace TravelAgent
             // btnSearchFlights
             // 
             this.btnSearchFlights.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.btnSearchFlights.Location = new System.Drawing.Point(1021, 54);
+            this.btnSearchFlights.Location = new System.Drawing.Point(98, 707);
             this.btnSearchFlights.Name = "btnSearchFlights";
             this.btnSearchFlights.Size = new System.Drawing.Size(159, 33);
             this.btnSearchFlights.TabIndex = 0;
@@ -77,9 +78,11 @@ namespace TravelAgent
             // 
             this.dgvFlights.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvFlights.Location = new System.Drawing.Point(98, 150);
+            this.dgvFlights.MultiSelect = false;
             this.dgvFlights.Name = "dgvFlights";
             this.dgvFlights.RowHeadersWidth = 62;
             this.dgvFlights.RowTemplate.Height = 33;
+            this.dgvFlights.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvFlights.Size = new System.Drawing.Size(1082, 225);
             this.dgvFlights.TabIndex = 2;
             // 
@@ -102,7 +105,7 @@ namespace TravelAgent
             // lblRetDate
             // 
             this.lblRetDate.AutoSize = true;
-            this.lblRetDate.Location = new System.Drawing.Point(577, 60);
+            this.lblRetDate.Location = new System.Drawing.Point(741, 60);
             this.lblRetDate.Name = "lblRetDate";
             this.lblRetDate.Size = new System.Drawing.Size(109, 25);
             this.lblRetDate.TabIndex = 5;
@@ -110,7 +113,7 @@ namespace TravelAgent
             // 
             // dtReturn
             // 
-            this.dtReturn.Location = new System.Drawing.Point(692, 55);
+            this.dtReturn.Location = new System.Drawing.Point(865, 56);
             this.dtReturn.Name = "dtReturn";
             this.dtReturn.Size = new System.Drawing.Size(315, 31);
             this.dtReturn.TabIndex = 6;
@@ -119,9 +122,11 @@ namespace TravelAgent
             // 
             this.dgvReturns.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvReturns.Location = new System.Drawing.Point(98, 439);
+            this.dgvReturns.MultiSelect = false;
             this.dgvReturns.Name = "dgvReturns";
             this.dgvReturns.RowHeadersWidth = 62;
             this.dgvReturns.RowTemplate.Height = 33;
+            this.dgvReturns.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvReturns.Size = new System.Drawing.Size(1082, 242);
             this.dgvReturns.TabIndex = 7;
             // 
@@ -183,6 +188,61 @@ namespace TravelAgent
             this.pnlBookingDetails.Size = new System.Drawing.Size(593, 530);
             this.pnlBookingDetails.TabIndex = 10;
             // 
+            // txtName
+            // 
+            this.txtName.Location = new System.Drawing.Point(150, 300);
+            this.txtName.Name = "txtName";
+            this.txtName.Size = new System.Drawing.Size(348, 31);
+            this.txtName.TabIndex = 20;
+            // 
+            // txtCVV
+            // 
+            this.txtCVV.Location = new System.Drawing.Point(406, 235);
+            this.txtCVV.Name = "txtCVV";
+            this.txtCVV.Size = new System.Drawing.Size(92, 31);
+            this.txtCVV.TabIndex = 19;
+            // 
+            // txtExpiry
+            // 
+            this.txtExpiry.Location = new System.Drawing.Point(150, 235);
+            this.txtExpiry.Name = "txtExpiry";
+            this.txtExpiry.Size = new System.Drawing.Size(110, 31);
+            this.txtExpiry.TabIndex = 18;
+            // 
+            // txtCardNo
+            // 
+            this.txtCardNo.Location = new System.Drawing.Point(150, 176);
+            this.txtCardNo.Name = "txtCardNo";
+            this.txtCardNo.Size = new System.Drawing.Size(348, 31);
+            this.txtCardNo.TabIndex = 17;
+            // 
+            // btnPay
+            // 
+            this.btnPay.Location = new System.Drawing.Point(148, 390);
+            this.btnPay.Name = "btnPay";
+            this.btnPay.Size = new System.Drawing.Size(152, 34);
+            this.btnPay.TabIndex = 16;
+            this.btnPay.Text = "Pay";
+            this.btnPay.UseVisualStyleBackColor = true;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(34, 303);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(63, 25);
+            this.label8.TabIndex = 15;
+            this.label8.Text = "Name:";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(306, 238);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(78, 25);
+            this.label7.TabIndex = 14;
+            this.label7.Text = "CVV No:";
+            // 
             // label6
             // 
             this.label6.AutoSize = true;
@@ -238,66 +298,22 @@ namespace TravelAgent
             this.label4.TabIndex = 0;
             this.label4.Text = "Booking Details";
             // 
-            // label7
+            // btnSelectFlights
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(306, 238);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(78, 25);
-            this.label7.TabIndex = 14;
-            this.label7.Text = "CVV No:";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(34, 303);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(63, 25);
-            this.label8.TabIndex = 15;
-            this.label8.Text = "Name:";
-            // 
-            // btnPay
-            // 
-            this.btnPay.Location = new System.Drawing.Point(148, 390);
-            this.btnPay.Name = "btnPay";
-            this.btnPay.Size = new System.Drawing.Size(152, 34);
-            this.btnPay.TabIndex = 16;
-            this.btnPay.Text = "Pay";
-            this.btnPay.UseVisualStyleBackColor = true;
-            // 
-            // txtCardNo
-            // 
-            this.txtCardNo.Location = new System.Drawing.Point(150, 176);
-            this.txtCardNo.Name = "txtCardNo";
-            this.txtCardNo.Size = new System.Drawing.Size(348, 31);
-            this.txtCardNo.TabIndex = 17;
-            // 
-            // txtExpiry
-            // 
-            this.txtExpiry.Location = new System.Drawing.Point(150, 235);
-            this.txtExpiry.Name = "txtExpiry";
-            this.txtExpiry.Size = new System.Drawing.Size(110, 31);
-            this.txtExpiry.TabIndex = 18;
-            // 
-            // txtCVV
-            // 
-            this.txtCVV.Location = new System.Drawing.Point(406, 235);
-            this.txtCVV.Name = "txtCVV";
-            this.txtCVV.Size = new System.Drawing.Size(92, 31);
-            this.txtCVV.TabIndex = 19;
-            // 
-            // txtName
-            // 
-            this.txtName.Location = new System.Drawing.Point(150, 300);
-            this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(348, 31);
-            this.txtName.TabIndex = 20;
+            this.btnSelectFlights.Location = new System.Drawing.Point(1021, 707);
+            this.btnSelectFlights.Name = "btnSelectFlights";
+            this.btnSelectFlights.Size = new System.Drawing.Size(159, 34);
+            this.btnSelectFlights.TabIndex = 12;
+            this.btnSelectFlights.Text = "Select Flights";
+            this.btnSelectFlights.UseVisualStyleBackColor = true;
+            this.btnSelectFlights.Click += new System.EventHandler(this.btnSelectFlights_Click);
             // 
             // MakeBooking
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1857, 745);
+            this.ClientSize = new System.Drawing.Size(1857, 781);
+            this.Controls.Add(this.btnSelectFlights);
             this.Controls.Add(this.pnlBookingHeader);
             this.Controls.Add(this.pnlBookingDetails);
             this.Controls.Add(this.panel2);
@@ -353,6 +369,7 @@ namespace TravelAgent
         private System.Windows.Forms.Button btnPay;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button btnSelectFlights;
     }
 }
 
