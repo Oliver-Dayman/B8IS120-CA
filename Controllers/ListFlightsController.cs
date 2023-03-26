@@ -25,8 +25,8 @@ namespace Ryanair.Controllers
         }
 
         // GET ListFlights/Get/Date
-        [HttpGet("{id}")]
-        public List<Flight> Get(DateTime dt)
+        [HttpGet("{dt}")]
+        public List<Flight> Get(string dt)
         {
             myBusinessClass = new BusinessClass();
             List<Flight> availableFlights = myBusinessClass.GetFlights(dt);
