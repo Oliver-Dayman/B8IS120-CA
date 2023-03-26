@@ -24,11 +24,13 @@ namespace AerLingus.Controllers
             return availableFlights;
         }
 
-        // GET ListFlights/Get/5
+        // GET ListFlights/Get/Date
         [HttpGet("{id}")]
-        public string Get(int id)
+        public List<Flight> Get(DateTime dt)
         {
-            return "value";
+            myBusinessClass = new BusinessClass();
+            List<Flight> availableFlights = myBusinessClass.GetFlights(dt);
+            return availableFlights;
         }
 
         // POST ListFlights/Post
