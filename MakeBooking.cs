@@ -131,5 +131,33 @@ namespace TravelAgent
                 }
             }
         }
+
+        private void btnPay_Click(object sender, EventArgs e)
+        {
+
+
+
+
+
+            //Aer Lingus Web API
+            HttpClient aerlingusClient = new HttpClient();
+            aerlingusClient.BaseAddress = new Uri("https://localhost:44387");
+            HttpResponseMessage aerLingusResult;
+            string aerLingusContent;
+
+            //Retrieve Aer Lingus flights for departure
+            aerLingusResult = await aerlingusClient.GetAsync("ListFlights/Get/" + depDate);
+            aerLingusContent = await aerLingusResult.Content.ReadAsStringAsync();
+
+            //Add to empty list for display in grid
+            List<Flight> availableFlights = JsonConvert.DeserializeObject<List<Flight>>(aerLingusContent);
+
+            //Retrieve Aer Lingus flights for return
+            aerLingusResult = await aerlingusClient.GetAsync("ListFlights/Get/" + retDate);
+            aerLingusContent = await aerLingusResult.Content.ReadAsStringAsync();
+
+            //Add to empty list for display in grid
+            List<Flight> returnFlights = JsonConvert.DeserializeObject<List<Flight>>(aerLingusContent);
+        }
     }
 }
