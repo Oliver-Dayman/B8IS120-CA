@@ -23,11 +23,23 @@ namespace Ryanair.DataTier
 
         public List<Flight> GetFlights()
         {
+            string cmdText = "SELECT ID, Reference, Departure, Arrival, Price FROM Flights";
+            return RetrieveFlights(cmdText);
+        }
+
+        public List<Flight> GetFlights(DateTime dt)
+        {
+            string cmdText = "SELECT ID, Reference, Departure, Arrival, Price FROM Flights WHERE Departure = '" + dt.ToString() + "'";
+            return RetrieveFlights(cmdText);
+        }
+
+        public List<Flight> RetrieveFlights(string cmdText)
+        {
             dataConnection.Open();
             SqlCommand dataCommand = new SqlCommand();
             dataCommand.Connection = dataConnection;
             dataCommand.CommandType = CommandType.Text;
-            dataCommand.CommandText = "SELECT ID, Reference, Departure, Arrival, Price FROM Flights";
+            dataCommand.CommandText = cmdText;
 
             SqlDataReader dataReader = dataCommand.ExecuteReader();
 
