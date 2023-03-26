@@ -89,10 +89,5 @@ namespace TravelAgent
             List<Flight> sortedReturnFlights = returnFlights.OrderBy(x => x.Departure).ToList();
             dgvReturns.DataSource = sortedReturnFlights;
         }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }
