@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AerLingus.BusinessTier;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -12,6 +13,8 @@ namespace AerLingus.Controllers
     [ApiController]
     public class ListFlightsController : ControllerBase
     {
+        public BusinessClass myBusinessClass { get; set; }
+        
         // GET: api/<ListFlightsController>
         [HttpGet]
         //public IEnumerable<string> Get()
@@ -20,7 +23,9 @@ namespace AerLingus.Controllers
         //}
         public string Get()
         {
-            return "Oliver - Aer Lingus";
+            myBusinessClass = new BusinessClass();
+            List<Flight> availableFlights = myBusinessClass.GetFlights();
+            return availableFlights.Count.ToString();
         }
 
         // GET api/<ListFlightsController>/5
