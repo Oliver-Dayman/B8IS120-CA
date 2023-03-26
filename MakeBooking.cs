@@ -27,6 +27,9 @@ namespace TravelAgent
         {
             // myBusinessClass = new BusinessClass();
 
+            //to format Departure date & Arrival date in date-only format: '01-Apr-2023'
+            string depDate = dtDeparture.Value.ToString("dd-MMM-yyyy");
+            string retDate = dtReturn.Value.ToString("dd-MMM-yyyy");
 
             ///// Aer Lingus /////
 
@@ -36,22 +39,22 @@ namespace TravelAgent
             HttpResponseMessage aerLingusResult;
             string aerLingusContent;
 
-            //Retrieve Aer Lingus flights
-            if (dtDeparture.Value == null)
-            {
-                aerLingusResult = await aerlingusClient.GetAsync("ListFlights/Get");
-            }
-            else
-            {
-                aerLingusResult = await aerlingusClient.GetAsync("ListFlights/Get/" + dtDeparture.Value);
-            }
+            //Retrieve Aer Lingus flights for departure
+            aerLingusResult = await aerlingusClient.GetAsync("ListFlights/Get/" + depDate);
             aerLingusContent = await aerLingusResult.Content.ReadAsStringAsync();
             
             //Add to empty list for display in grid
             List<Flight> availableFlights = JsonConvert.DeserializeObject<List<Flight>>(aerLingusContent);
 
+            //Retrieve Aer Lingus flights for return
+            aerLingusResult = await aerlingusClient.GetAsync("ListFlights/Get/" + retDate);
+            aerLingusContent = await aerLingusResult.Content.ReadAsStringAsync();
+
+            //Add to empty list for display in grid
+            List<Flight> returnFlights = JsonConvert.DeserializeObject<List<Flight>>(aerLingusContent);
+
             ///// Aer Lingus /////
-            
+
             // ---------------- //
 
             /////  Ryanair   /////
@@ -62,25 +65,34 @@ namespace TravelAgent
             HttpResponseMessage ryanairResult;
             string ryanairContent;
 
-            //Retrieve Ryanair flights
-            if (dtDeparture.Value == null)
-            {
-                ryanairResult = await ryanairClient.GetAsync("ListFlights/Get");
-            }
-            else
-            {
-                ryanairResult = await ryanairClient.GetAsync("ListFlights/Get/" + dtDeparture.Value);
-            }
+            //Retrieve Ryanair flights for departure
+            ryanairResult = await ryanairClient.GetAsync("ListFlights/Get/" + depDate);
             ryanairContent = await ryanairResult.Content.ReadAsStringAsync();
 
-            //add Ryanair flights to existing list (single list for both airlines)
+            //add Ryanair flights to existing departures list (single list for both airlines)
             availableFlights.AddRange(JsonConvert.DeserializeObject<List<Flight>>(ryanairContent));
+
+            //Retrieve Ryanair flights for departure
+            ryanairResult = await ryanairClient.GetAsync("ListFlights/Get/" + retDate);
+            ryanairContent = await ryanairResult.Content.ReadAsStringAsync();
+
+            //add Ryanair flights to existing arrivals list (single list for both airlines)
+            returnFlights.AddRange(JsonConvert.DeserializeObject<List<Flight>>(ryanairContent));
 
             /////  Ryanair   /////
 
             //sort list by departure date and bind to grid
             List<Flight> sortedFlights = availableFlights.OrderBy(x => x.Departure).ToList();
             dgvFlights.DataSource = sortedFlights;
+
+            //sort list by return date and bind to grid
+            List<Flight> sortedReturnFlights = returnFlights.OrderBy(x => x.Departure).ToList();
+            dgvReturns.DataSource = sortedReturnFlights;
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
