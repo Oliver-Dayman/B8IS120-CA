@@ -12,5 +12,6 @@ namespace AerLingus
         public DateTime Departure { get; set; }
         public DateTime Arrival { get; set; }
         public decimal Price { get; set; }
+        public string Carrier { get; set; }
     }
 }

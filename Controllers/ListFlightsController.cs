@@ -15,41 +15,31 @@ namespace AerLingus.Controllers
     {
         public BusinessClass myBusinessClass { get; set; }
         
-        // GET: api/<ListFlightsController>
+        // GET: ListFlights/Get
         [HttpGet]
-        //public IEnumerable<string> Get()
-        //{
-        //    return new string[] { "value1", "value2" };
-        //}
-        public string Get()
+        public List<Flight> Get()
         {
             myBusinessClass = new BusinessClass();
             List<Flight> availableFlights = myBusinessClass.GetFlights();
-            return availableFlights.Count.ToString();
+            return availableFlights;
         }
 
-        // GET api/<ListFlightsController>/5
+        // GET ListFlights/Get/5
         [HttpGet("{id}")]
         public string Get(int id)
         {
             return "value";
         }
 
-        // POST api/<ListFlightsController>
+        // POST ListFlights/Post
         [HttpPost]
         public void Post([FromBody] string value)
         {
         }
 
-        // PUT api/<ListFlightsController>/5
+        // PUT ListFlights/Put/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<ListFlightsController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
         {
         }
     }

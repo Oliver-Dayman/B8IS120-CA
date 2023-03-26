@@ -37,6 +37,7 @@ namespace AerLingus.DataTier
                 flight.Departure = dataReader.GetDateTime(2);
                 flight.Arrival = dataReader.GetDateTime(3);
                 flight.Price = dataReader.GetDecimal(4);
+                flight.Carrier = "Aer Lingus";
                 listFlights.Add(flight);
             }
             dataReader.Close();
