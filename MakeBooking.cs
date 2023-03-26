@@ -10,11 +10,14 @@ using System.Windows.Forms;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Newtonsoft.Json;
+using TravelAgent.BusinessTier;
 
 namespace TravelAgent
 {
     public partial class MakeBooking : Form
     {
+        public BusinessClass myBusinessClass { get; set; }
         public MakeBooking()
         {
             InitializeComponent();
@@ -22,19 +25,25 @@ namespace TravelAgent
 
         private async void btnSearchFlights_Click(object sender, EventArgs e)
         {
+            // myBusinessClass = new BusinessClass();
             textBox1.Text = "";
 
-            using var aerlingusClient = new HttpClient();
+            //Retrieve Aer Lingus flights
+            HttpClient aerlingusClient = new HttpClient();
             aerlingusClient.BaseAddress = new Uri("https://localhost:44387");
-            HttpResponseMessage result1 = await aerlingusClient.GetAsync("ListFlights/Get");
-            string content1 = await result1.Content.ReadAsStringAsync();
-            textBox1.Text = content1;
+            HttpResponseMessage aerLingusResult = await aerlingusClient.GetAsync("ListFlights/Get");
+            string aerLingusContent = await aerLingusResult.Content.ReadAsStringAsync();
 
-            using var ryanairClient = new HttpClient();
-            ryanairClient.BaseAddress = new Uri("https://localhost:44354");
-            HttpResponseMessage result2 = await ryanairClient.GetAsync("ListFlights/Get");
-            string content2 = await result2.Content.ReadAsStringAsync();
-            textBox1.Text = textBox1.Text + " - " + content2;
+            List<Flight> availableFlights = JsonConvert.DeserializeObject<List<Flight>>(aerLingusContent);
+
+            //Retrieve Ryanair flights
+            //HttpClient ryanairClient = new HttpClient();
+            //ryanairClient.BaseAddress = new Uri("https://localhost:44354");
+            //HttpResponseMessage ryanairResult = await ryanairClient.GetAsync("ListFlights/Get");
+            //string ryanairContent = await ryanairResult.Content.ReadAsStringAsync();
+            //List<Flight> availableFlights = JsonConvert.DeserializeObject<List<Flight>>(aerLingusContent); (need to add to existing list)
+
+            textBox1.Text = availableFlights.ToString();   //need to change to grid
         }
     }
 }
