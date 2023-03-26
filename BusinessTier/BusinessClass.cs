@@ -20,7 +20,7 @@ namespace AerLingus.BusinessTier
             return myDataClass.GetFlights();
         }
 
-        public List<Flight> GetFlights(DateTime dt)
+        public List<Flight> GetFlights(string dt)
         {
             return myDataClass.GetFlights(dt);
         }

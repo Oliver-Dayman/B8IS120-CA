@@ -25,9 +25,9 @@ namespace AerLingus.DataTier
             return RetrieveFlights(cmdText);
         }
 
-        public List<Flight> GetFlights(DateTime dt)
+        public List<Flight> GetFlights(string dt)
         {
-            string cmdText = "SELECT ID, Reference, Departure, Arrival, Price FROM Flights WHERE Departure = '" + dt.ToString() + "'";
+            string cmdText = "SELECT ID, Reference, Departure, Arrival, Price FROM Flights WHERE DATEADD(dd, 0, DATEDIFF(dd, 0, Departure)) = '" + dt + "'";
             return RetrieveFlights(cmdText);
         }
 
