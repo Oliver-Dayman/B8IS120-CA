@@ -33,17 +33,19 @@ namespace TravelAgent
             aerlingusClient.BaseAddress = new Uri("https://localhost:44387");
             HttpResponseMessage aerLingusResult = await aerlingusClient.GetAsync("ListFlights/Get");
             string aerLingusContent = await aerLingusResult.Content.ReadAsStringAsync();
-
             List<Flight> availableFlights = JsonConvert.DeserializeObject<List<Flight>>(aerLingusContent);
+            //BindingList<Flight> availableFlights = JsonConvert.DeserializeObject<BindingList<Flight>>(aerLingusContent);
 
             //Retrieve Ryanair flights
-            //HttpClient ryanairClient = new HttpClient();
-            //ryanairClient.BaseAddress = new Uri("https://localhost:44354");
-            //HttpResponseMessage ryanairResult = await ryanairClient.GetAsync("ListFlights/Get");
-            //string ryanairContent = await ryanairResult.Content.ReadAsStringAsync();
-            //List<Flight> availableFlights = JsonConvert.DeserializeObject<List<Flight>>(aerLingusContent); (need to add to existing list)
+            HttpClient ryanairClient = new HttpClient();
+            ryanairClient.BaseAddress = new Uri("https://localhost:44354");
+            HttpResponseMessage ryanairResult = await ryanairClient.GetAsync("ListFlights/Get");
+            string ryanairContent = await ryanairResult.Content.ReadAsStringAsync();
+            //add Ryanair flights to existing list
+            availableFlights.AddRange(JsonConvert.DeserializeObject<List<Flight>>(ryanairContent));
 
-            textBox1.Text = availableFlights.ToString();   //need to change to grid
+            List<Flight> sortedFlights = availableFlights.OrderBy(x => x.Departure).ToList();
+            dgvFlights.DataSource = sortedFlights;
         }
     }
 }

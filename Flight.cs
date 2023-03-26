@@ -6,6 +6,7 @@ namespace TravelAgent
 {
     public class Flight
     {
+        public string Carrier { get; set; }
         public int ID { get; set; }
         public string Reference { get; set; }
         public DateTime Departure { get; set; }

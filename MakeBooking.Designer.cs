@@ -31,11 +31,13 @@ namespace TravelAgent
         {
             this.btnSearchFlights = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.dgvFlights = new System.Windows.Forms.DataGridView();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvFlights)).BeginInit();
             this.SuspendLayout();
             // 
             // btnSearchFlights
             // 
-            this.btnSearchFlights.Location = new System.Drawing.Point(1499, 36);
+            this.btnSearchFlights.Location = new System.Drawing.Point(998, 30);
             this.btnSearchFlights.Name = "btnSearchFlights";
             this.btnSearchFlights.Size = new System.Drawing.Size(183, 34);
             this.btnSearchFlights.TabIndex = 0;
@@ -45,20 +47,32 @@ namespace TravelAgent
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(1164, 128);
+            this.textBox1.Location = new System.Drawing.Point(663, 534);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(518, 31);
             this.textBox1.TabIndex = 1;
+            // 
+            // dgvFlights
+            // 
+            this.dgvFlights.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvFlights.Location = new System.Drawing.Point(97, 108);
+            this.dgvFlights.Name = "dgvFlights";
+            this.dgvFlights.RowHeadersWidth = 62;
+            this.dgvFlights.RowTemplate.Height = 33;
+            this.dgvFlights.Size = new System.Drawing.Size(1084, 225);
+            this.dgvFlights.TabIndex = 2;
             // 
             // MakeBooking
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1857, 745);
+            this.Controls.Add(this.dgvFlights);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.btnSearchFlights);
             this.Name = "MakeBooking";
             this.Text = "Form1";
+            ((System.ComponentModel.ISupportInitialize)(this.dgvFlights)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -68,6 +82,7 @@ namespace TravelAgent
 
         private System.Windows.Forms.Button btnSearchFlights;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.DataGridView dgvFlights;
     }
 }
 
