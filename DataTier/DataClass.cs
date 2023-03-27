@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
@@ -61,5 +59,47 @@ namespace Ryanair.DataTier
             return listFlights;
         }
 
+        public string CreateBooking(Booking newBooking)
+        {
+            dataConnection.Open();
+            SqlCommand dataCommand = new SqlCommand();
+            dataCommand.Connection = dataConnection;
+            dataCommand.CommandType = CommandType.Text;
+            dataCommand.CommandText = "INSERT INTO Bookings(Name, Address1, Phone, Email, FlightRef, Price, PayRef)" +
+                                        " VALUES(@Name, @Address, @Phone, @Email, @FlightRef, @Price, @Payref)";
+
+            SqlParameter param1 = new SqlParameter("@Name", SqlDbType.NVarChar);
+            param1.Value = newBooking.Name;
+            dataCommand.Parameters.Add(param1);
+
+            SqlParameter param2 = new SqlParameter("@Address", SqlDbType.NVarChar);
+            param2.Value = newBooking.Address1;
+            dataCommand.Parameters.Add(param2);
+
+            SqlParameter param3 = new SqlParameter("@Phone", SqlDbType.NVarChar);
+            param3.Value = newBooking.Phone;
+            dataCommand.Parameters.Add(param3);
+
+            SqlParameter param4 = new SqlParameter("@Email", SqlDbType.NVarChar);
+            param4.Value = newBooking.Email;
+            dataCommand.Parameters.Add(param4);
+
+            SqlParameter param5 = new SqlParameter("@FlightRef", SqlDbType.NVarChar);
+            param5.Value = newBooking.FlightRef;
+            dataCommand.Parameters.Add(param5);
+
+            SqlParameter param6 = new SqlParameter("@Price", SqlDbType.Decimal);
+            param6.Value = newBooking.Price;
+            dataCommand.Parameters.Add(param6);
+
+            SqlParameter param7 = new SqlParameter("@Payref", SqlDbType.NVarChar);
+            param7.Value = newBooking.PayRef;
+            dataCommand.Parameters.Add(param7);
+
+            dataCommand.ExecuteNonQuery();
+
+            dataConnection.Close();
+            return "";
+        }
     }
 }
