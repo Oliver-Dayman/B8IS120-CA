@@ -18,15 +18,29 @@ namespace TravelAgent
     public partial class MakeBooking : Form
     {
         public BusinessClass myBusinessClass { get; set; }
+
+        HttpClient aerLingusClient = new HttpClient();
+        HttpClient ryanairClient = new HttpClient();
+        HttpClient bookingClient = new HttpClient();
+        HttpClient paymentClient = new HttpClient();
+
         string selectedCarrier = "";
         string selectedDepartureRef = "";
+        decimal selectedDeparturePrice = 0;
         string selectedReturnRef = "";
+        decimal selectedReturnPrice = 0;
         decimal selectedTotalPrice = 0;
+
         public MakeBooking()
         {
             InitializeComponent();
+
             pnlBookingHeader.Visible = false;
             pnlBookingDetails.Visible = false;
+
+            aerLingusClient.BaseAddress = new Uri("https://localhost:44387");
+            ryanairClient.BaseAddress = new Uri("https://localhost:44354");
+            paymentClient.BaseAddress = new Uri("https://localhost:44387");  //needs to change once VISA project built....
         }
 
         private async void btnSearchFlights_Click(object sender, EventArgs e)
@@ -40,20 +54,18 @@ namespace TravelAgent
             ///// Aer Lingus /////
 
             //Aer Lingus Web API
-            HttpClient aerlingusClient = new HttpClient();
-            aerlingusClient.BaseAddress = new Uri("https://localhost:44387");
             HttpResponseMessage aerLingusResult;
             string aerLingusContent;
 
             //Retrieve Aer Lingus flights for departure
-            aerLingusResult = await aerlingusClient.GetAsync("ListFlights/Get/" + depDate);
+            aerLingusResult = await aerLingusClient.GetAsync("ListFlights/Get/" + depDate);
             aerLingusContent = await aerLingusResult.Content.ReadAsStringAsync();
             
             //Add to empty list for display in grid
             List<Flight> availableFlights = JsonConvert.DeserializeObject<List<Flight>>(aerLingusContent);
 
             //Retrieve Aer Lingus flights for return
-            aerLingusResult = await aerlingusClient.GetAsync("ListFlights/Get/" + retDate);
+            aerLingusResult = await aerLingusClient.GetAsync("ListFlights/Get/" + retDate);
             aerLingusContent = await aerLingusResult.Content.ReadAsStringAsync();
 
             //Add to empty list for display in grid
@@ -66,8 +78,7 @@ namespace TravelAgent
             /////  Ryanair   /////
 
             //Ryanair Web API
-            HttpClient ryanairClient = new HttpClient();
-            ryanairClient.BaseAddress = new Uri("https://localhost:44354");
+
             HttpResponseMessage ryanairResult;
             string ryanairContent;
 
@@ -123,7 +134,9 @@ namespace TravelAgent
                 {
                     selectedCarrier = dgvFlights.SelectedRows[0].Cells[0].Value.ToString();
                     selectedDepartureRef = dgvFlights.SelectedRows[0].Cells[2].Value.ToString();
+                    selectedDeparturePrice = (decimal)dgvFlights.SelectedRows[0].Cells[5].Value;
                     selectedReturnRef = dgvReturns.SelectedRows[0].Cells[2].Value.ToString();
+                    selectedReturnPrice = (decimal)dgvReturns.SelectedRows[0].Cells[5].Value;
                     selectedTotalPrice = (decimal)dgvFlights.SelectedRows[0].Cells[5].Value + (decimal)dgvReturns.SelectedRows[0].Cells[5].Value;
                     txtPrice.Text = selectedTotalPrice.ToString("F2");
                     pnlBookingHeader.Visible = true;
@@ -134,48 +147,39 @@ namespace TravelAgent
 
         private async void btnPay_Click(object sender, EventArgs e)
         {
-            //Configure for appropriate systems
-            HttpClient bookingClient = new HttpClient();
-            switch (selectedCarrier)
-            {
-                case "Aer Lingus":
-                    bookingClient.BaseAddress = new Uri("https://localhost:44387");
-                    break;
-                case "Ryanair":
-                    bookingClient.BaseAddress = new Uri("https://localhost:44354");
-                    break;
-            }
-            HttpResponseMessage bookingResult;
+            ByteArrayContent byteContent;
 
-            HttpClient paymentClient = new HttpClient();
-            paymentClient.BaseAddress = new Uri("https://localhost:44387");  //needs to change once VISA project built....
-            HttpResponseMessage paymentResult;
+            HttpResponseMessage bookingResponse;
+            string bookingResult;
+
+            HttpResponseMessage paymentResponse;
+            string paymentResult;
 
             //Assemble outward booking details
             Booking outwardBooking = new Booking();
-            //outwardBooking.ID - identity on DB
+            outwardBooking.ID = 0; //identity on DB
             outwardBooking.Name = txtName.Text;
             outwardBooking.Address1 = txtAddress1.Text;
             outwardBooking.Phone = txtPhone.Text;
             outwardBooking.Email = txtEmail.Text;
             outwardBooking.FlightRef = selectedDepartureRef;
-            outwardBooking.Price = selectedTotalPrice;
-            //outwardBooking.PayRef - null for now
+            outwardBooking.Price = selectedDeparturePrice;
+            outwardBooking.PayRef = "";
 
             //Assemble return booking details
             Booking returnBooking = new Booking();
-            //outwardBooking.ID - identity on DB
+            returnBooking.ID = 0; //identity on DB
             returnBooking.Name = txtName.Text;
             returnBooking.Address1 = txtAddress1.Text;
             returnBooking.Phone = txtPhone.Text;
             returnBooking.Email = txtEmail.Text;
             returnBooking.FlightRef = selectedReturnRef;
-            returnBooking.Price = selectedTotalPrice;
-            //returnBooking.PayRef - null for now
+            returnBooking.Price = selectedReturnPrice;
+            returnBooking.PayRef = "";
 
             //Assemble payment details
             Payment currentPayment = new Payment();
-            //currentPayment.ID - identity on DB
+            currentPayment.ID = 0; //identity on DB
             currentPayment.Merchant = "Happy Travels";
             currentPayment.Name = txtName.Text;
             currentPayment.Card = txtCardNo.Text;
@@ -188,14 +192,38 @@ namespace TravelAgent
             //Step 1: Create Bookings on Carrier System (2 for a return trip) - without Authorization Code - holds the bookings temporarily - only confirmed when Payment Ref is added
             ////////////////////////////////////////////////////////////
 
-            //Post Outward Booking - test
-            bookingResult = await bookingClient.PostAsync("MakeBooking/Post/", outwardBooking);
-            //string aerLingusContent = await aerLingusResult.Content.ReadAsStringAsync();
+            //Post Outward Booking
+            byteContent = new ByteArrayContent(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(outwardBooking)));
+            byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            switch (selectedCarrier)
+            {
+                case "Aer Lingus":
+                    bookingResponse = await aerLingusClient.PostAsync("MakeBooking/Post/", byteContent);
+                    break;
+                default:
+                    bookingResponse = await ryanairClient.PostAsync("MakeBooking/Post/", byteContent);
+                    break;
+            }
+
+            bookingResult = await bookingResponse.Content.ReadAsStringAsync();
             //handling response/errors?
 
             //Post Return Booking
-            bookingResult = await bookingClient.PostAsync("MakeBooking/Post/", returnBooking);
-            //string aerLingusContent = await aerLingusResult.Content.ReadAsStringAsync();
+            byteContent = new ByteArrayContent(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(returnBooking)));
+            byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            switch (selectedCarrier)
+            {
+                case "Aer Lingus":
+                    bookingResponse = await aerLingusClient.PostAsync("MakeBooking/Post/", byteContent);
+                    break;
+                default:
+                    bookingResponse = await ryanairClient.PostAsync("MakeBooking/Post/", byteContent);
+                    break;
+            }
+
+            bookingResult = await bookingResponse.Content.ReadAsStringAsync();
             //handling response/errors?
 
             ////////////////////////////////////////////////////////////
@@ -203,8 +231,11 @@ namespace TravelAgent
             ////////////////////////////////////////////////////////////
 
             //Post Payment
-            bookingResult = await bookingClient.PostAsync("MakePayment/Post/", currentPayment);
-            //string aerLingusContent = await aerLingusResult.Content.ReadAsStringAsync();
+            byteContent = new ByteArrayContent(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(currentPayment)));
+            byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            paymentResponse = await paymentClient.PostAsync("MakePayment/Post/", byteContent);
+            paymentResult = await paymentResponse.Content.ReadAsStringAsync();
             //handling response/errors?
             //NEED TO ACCEPT BACK PAY REF INTO VARIABLE
 
