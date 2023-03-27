@@ -58,37 +58,48 @@ namespace AerLingus.DataTier
 
             return listFlights;
         }
-        //public string BookingGeneral(GeneralBooking gb)
-        //{
-        //    dataConnection.Open();
-        //    SqlCommand dataCommand = new SqlCommand();
-        //    dataCommand.Connection = dataConnection;
-        //    dataCommand.CommandType = CommandType.Text;
-        //    dataCommand.CommandText = "INSERT INTO GeneralBooking(RestaurantName, TableSize, BookingDate, NameUnder, PhoneNumber)" +
-        //                                "VALUES(@RestaurantName, @TableSize, @BookingDate, @NameUnder, @PhoneNumber)";
 
-        //    SqlParameter param1 = new SqlParameter("@RestaurantName", SqlDbType.NVarChar);
-        //    param1.Value = gb.RestaurantName;
-        //    dataCommand.Parameters.Add(param1);
-        //    SqlParameter param2 = new SqlParameter("@TableSize", SqlDbType.Int);
-        //    param2.Value = gb.TableSize;
-        //    dataCommand.Parameters.Add(param2);
-        //    SqlParameter param3 = new SqlParameter("@BookingDate", SqlDbType.DateTime);
-        //    param3.Value = gb.BookingDate;
-        //    dataCommand.Parameters.Add(param3);
-        //    SqlParameter param4 = new SqlParameter("@NameUnder", SqlDbType.NVarChar);
-        //    param4.Value = gb.NameUnder;
-        //    dataCommand.Parameters.Add(param4);
-        //    SqlParameter param5 = new SqlParameter("@PhoneNumber", SqlDbType.Int);
-        //    param5.Value = gb.PhoneNumber;
-        //    dataCommand.Parameters.Add(param5);
+        public string CreateBooking(Booking newBooking)
+        {
+            dataConnection.Open();
+            SqlCommand dataCommand = new SqlCommand();
+            dataCommand.Connection = dataConnection;
+            dataCommand.CommandType = CommandType.Text;
+            dataCommand.CommandText = "INSERT INTO Bookings(Name, Address1, Phone, Email, FlightRef, Price, PayRef)" +
+                                        " VALUES(@Name, @Address, @Phone, @Email, @FlightRef, @Price, @Payref)";
 
+            SqlParameter param1 = new SqlParameter("@Name", SqlDbType.NVarChar);
+            param1.Value = newBooking.Name;
+            dataCommand.Parameters.Add(param1);
 
-        //    dataCommand.ExecuteNonQuery();
+            SqlParameter param2 = new SqlParameter("@Address", SqlDbType.NVarChar);
+            param2.Value = newBooking.Address1;
+            dataCommand.Parameters.Add(param2);
 
-        //    dataConnection.Close();
-        //    return "";
+            SqlParameter param3 = new SqlParameter("@Phone", SqlDbType.NVarChar);
+            param3.Value = newBooking.Phone;
+            dataCommand.Parameters.Add(param3);
 
-        //}
+            SqlParameter param4 = new SqlParameter("@Email", SqlDbType.NVarChar);
+            param4.Value = newBooking.Email;
+            dataCommand.Parameters.Add(param4);
+
+            SqlParameter param5 = new SqlParameter("@FlightRef", SqlDbType.NVarChar);
+            param5.Value = newBooking.FlightRef;
+            dataCommand.Parameters.Add(param5);
+
+            SqlParameter param6 = new SqlParameter("@Price", SqlDbType.Decimal);
+            param6.Value = newBooking.Price;
+            dataCommand.Parameters.Add(param6);
+
+            SqlParameter param7 = new SqlParameter("@Payref", SqlDbType.NVarChar);
+            param7.Value = newBooking.PayRef;
+            dataCommand.Parameters.Add(param7);
+
+            dataCommand.ExecuteNonQuery();
+
+            dataConnection.Close();
+            return "";
+        }
     }
 }

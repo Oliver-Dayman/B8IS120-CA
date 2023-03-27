@@ -24,5 +24,10 @@ namespace AerLingus.BusinessTier
         {
             return myDataClass.GetFlights(dt);
         }
+
+        public string CreateBooking(Booking newBooking)
+        {
+            return myDataClass.CreateBooking(newBooking);
+        }
     }
 }
