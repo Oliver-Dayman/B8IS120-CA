@@ -188,7 +188,7 @@ namespace TravelAgent
             //Step 1: Create Bookings on Carrier System (2 for a return trip) - without Authorization Code - holds the bookings temporarily - only confirmed when Payment Ref is added
             ////////////////////////////////////////////////////////////
 
-            //Post Outward Booking
+            //Post Outward Booking - test
             bookingResult = await bookingClient.PostAsync("MakeBooking/Post/", outwardBooking);
             //string aerLingusContent = await aerLingusResult.Content.ReadAsStringAsync();
             //handling response/errors?
