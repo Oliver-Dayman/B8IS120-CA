@@ -28,5 +28,9 @@ namespace Ryanair.BusinessTier
         {
             return myDataClass.CreateBooking(newBooking);
         }
+        public string UpdateBooking(Confirmation newConfirmation)
+        {
+            return myDataClass.ConfirmBooking(newConfirmation);
+        }
     }
 }

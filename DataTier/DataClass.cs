@@ -66,7 +66,7 @@ namespace Ryanair.DataTier
             dataCommand.Connection = dataConnection;
             dataCommand.CommandType = CommandType.Text;
             dataCommand.CommandText = "INSERT INTO Bookings(Name, Address1, Phone, Email, FlightRef, Price, PayRef)" +
-                                        " VALUES(@Name, @Address, @Phone, @Email, @FlightRef, @Price, @Payref)";
+                                        " VALUES(@Name, @Address, @Phone, @Email, @FlightRef, @Price, @Payref);SELECT SCOPE_IDENTITY();";
 
             SqlParameter param1 = new SqlParameter("@Name", SqlDbType.NVarChar);
             param1.Value = newBooking.Name;
@@ -95,6 +95,36 @@ namespace Ryanair.DataTier
             SqlParameter param7 = new SqlParameter("@Payref", SqlDbType.NVarChar);
             param7.Value = newBooking.PayRef;
             dataCommand.Parameters.Add(param7);
+
+            SqlParameter param8 = new SqlParameter("@ID", SqlDbType.Int, 0, "ID");
+            param8.Direction = ParameterDirection.Output;
+            dataCommand.Parameters.Add(param8);
+
+            string bookingRef = "";
+            object retObject = dataCommand.ExecuteScalar();
+            if (retObject != null)
+            {
+                bookingRef = retObject.ToString();
+            }
+
+            dataConnection.Close();
+            return "";
+        }
+        public string ConfirmBooking(Confirmation newConfirmation)
+        {
+            dataConnection.Open();
+            SqlCommand dataCommand = new SqlCommand();
+            dataCommand.Connection = dataConnection;
+            dataCommand.CommandType = CommandType.Text;
+            dataCommand.CommandText = "UPDATE Bookings SET PayRef = @PayRef WHERE ID = @ID";
+
+            SqlParameter param1 = new SqlParameter("@PayRef", SqlDbType.NVarChar);
+            param1.Value = newConfirmation.PayRef;
+            dataCommand.Parameters.Add(param1);
+
+            SqlParameter param2 = new SqlParameter("@ID", SqlDbType.Int);
+            param2.Value = newConfirmation.BookingID;
+            dataCommand.Parameters.Add(param2);
 
             dataCommand.ExecuteNonQuery();
 
