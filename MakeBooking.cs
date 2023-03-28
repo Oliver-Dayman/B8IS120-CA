@@ -40,7 +40,7 @@ namespace TravelAgent
 
             aerLingusClient.BaseAddress = new Uri("https://localhost:44387");
             ryanairClient.BaseAddress = new Uri("https://localhost:44354");
-            paymentClient.BaseAddress = new Uri("https://localhost:44387");  //needs to change once VISA project built....
+            paymentClient.BaseAddress = new Uri("https://localhost:44386");  //needs to change once VISA project built....
         }
 
         private async void btnSearchFlights_Click(object sender, EventArgs e)
@@ -142,6 +142,10 @@ namespace TravelAgent
                     pnlBookingHeader.Visible = true;
                     pnlBookingDetails.Visible = true;
                 }
+                else
+                {
+                    MessageBox.Show("Outbound and Return Flights must use the same Airline");
+                }
             }
         }
 
@@ -150,10 +154,14 @@ namespace TravelAgent
             ByteArrayContent byteContent;
 
             HttpResponseMessage bookingResponse;
-            string bookingResult;
+            string outwardBookingRef = "";
+            string returnBookingRef = "";
+            string bookingResult = "";
+            int outwardRef = 0;
+            int returnRef = 0;
 
             HttpResponseMessage paymentResponse;
-            string paymentResult;
+            string paymentRef = "";
 
             //Assemble outward booking details
             Booking outwardBooking = new Booking();
@@ -206,7 +214,7 @@ namespace TravelAgent
                     break;
             }
 
-            bookingResult = await bookingResponse.Content.ReadAsStringAsync();
+            outwardBookingRef = await bookingResponse.Content.ReadAsStringAsync(); //outwardBookingRef will contain newly created ID on Booking Record for outward flight
             //handling response/errors?
 
             //Post Return Booking
@@ -223,7 +231,7 @@ namespace TravelAgent
                     break;
             }
 
-            bookingResult = await bookingResponse.Content.ReadAsStringAsync();
+            returnBookingRef = await bookingResponse.Content.ReadAsStringAsync(); //returnBookingRef will contain newly created ID on Booking Record for return flight
             //handling response/errors?
 
             ////////////////////////////////////////////////////////////
@@ -235,15 +243,57 @@ namespace TravelAgent
             byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             paymentResponse = await paymentClient.PostAsync("MakePayment/Post/", byteContent);
-            paymentResult = await paymentResponse.Content.ReadAsStringAsync();
+            paymentRef = await paymentResponse.Content.ReadAsStringAsync(); //paymentRef will contain newly created ID on Payment Record
             //handling response/errors?
-            //NEED TO ACCEPT BACK PAY REF INTO VARIABLE
 
             ////////////////////////////////////////////////////////////
             //Step 3: Update Booking with Payment Ref (on Carrier System)
             ////////////////////////////////////////////////////////////
 
-            //NEED TO USE PAY REF AND UPDATE BOTH EXISTING BOOKINGS (OUTWARD AND RETURN)
+            if (paymentRef != "") //payment processed successfully
+            {
+                //Update Outward Booking with Payment Ref
+                Confirmation outwardConfirmation = new Confirmation();
+                Int32.TryParse(outwardBookingRef, out outwardRef);
+                outwardConfirmation.BookingID = outwardRef;
+                outwardConfirmation.PayRef = "Ref: " + paymentRef;
+                byteContent = new ByteArrayContent(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(outwardConfirmation)));
+                byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                switch (selectedCarrier)
+                {
+                    case "Aer Lingus":
+                        bookingResponse = await aerLingusClient.PostAsync("MakeBooking/Post/", byteContent);
+                        break;
+                    default:
+                        bookingResponse = await ryanairClient.PostAsync("MakeBooking/Post/", byteContent);
+                        break;
+                }
+
+                bookingResult = await bookingResponse.Content.ReadAsStringAsync();
+                //handling response/errors?
+
+                //Update Return Booking with Payment Ref
+                Confirmation returnConfirmation = new Confirmation();
+                Int32.TryParse(returnBookingRef, out returnRef);
+                returnConfirmation.BookingID = outwardRef;
+                returnConfirmation.PayRef = "Ref: " + paymentRef;
+                byteContent = new ByteArrayContent(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(returnConfirmation)));
+                byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                switch (selectedCarrier)
+                {
+                    case "Aer Lingus":
+                        bookingResponse = await aerLingusClient.PostAsync("MakeBooking/Post/", byteContent);
+                        break;
+                    default:
+                        bookingResponse = await ryanairClient.PostAsync("MakeBooking/Post/", byteContent);
+                        break;
+                }
+
+                bookingResult = await bookingResponse.Content.ReadAsStringAsync();
+                //handling response/errors?
+            }
         }
     }
 }
