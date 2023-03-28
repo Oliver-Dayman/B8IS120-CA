@@ -26,7 +26,7 @@ namespace VISA.DataTier
             dataCommand.Connection = dataConnection;
             dataCommand.CommandType = CommandType.Text;
             dataCommand.CommandText = "INSERT INTO Payment(Merchant, ExternalRef, Card, Expiry, CVV, Name, Price)" +
-                                        " VALUES(@Merchant, @ExternalRef, @Card, @Expiry, @CVV, @Name, @Price)";
+                                        " VALUES(@Merchant, @ExternalRef, @Card, @Expiry, @CVV, @Name, @Price);SELECT SCOPE_IDENTITY();";
 
             SqlParameter param1 = new SqlParameter("@Merchant", SqlDbType.NVarChar);
             param1.Value = newPayment.Merchant;
@@ -48,21 +48,24 @@ namespace VISA.DataTier
             param5.Value = newPayment.CVV;
             dataCommand.Parameters.Add(param5);
 
-            SqlParameter param6 = new SqlParameter("@Name", SqlDbType.Decimal);
+            SqlParameter param6 = new SqlParameter("@Name", SqlDbType.NVarChar);
             param6.Value = newPayment.Name;
             dataCommand.Parameters.Add(param6);
 
-            SqlParameter param7 = new SqlParameter("@Price", SqlDbType.NVarChar);
+            SqlParameter param7 = new SqlParameter("@Price", SqlDbType.Decimal);
             param7.Value = newPayment.Price;
             dataCommand.Parameters.Add(param7);
 
-            //output parameter - to receive back Auth Code/ID
-            SqlParameter param8 = new SqlParameter("@ID", SqlDbType.Int);
+            SqlParameter param8 = new SqlParameter("@ID", SqlDbType.Int, 0, "ID");
             param8.Direction = ParameterDirection.Output;
             dataCommand.Parameters.Add(param8);
 
-            dataCommand.ExecuteNonQuery();
-            string authCode = dataCommand.Parameters["@ID"].Value.ToString();
+            string authCode = "";
+            object retObject = dataCommand.ExecuteScalar();
+            if (retObject != null)
+            {
+                authCode = retObject.ToString();
+            }
 
             dataConnection.Close();
             return authCode;
