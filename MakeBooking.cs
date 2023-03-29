@@ -53,9 +53,9 @@ namespace TravelAgent
                 string depDate = dtDeparture.Value.ToString("dd-MMM-yyyy");
                 string retDate = dtReturn.Value.ToString("dd-MMM-yyyy");
 
-                ///// Aer Lingus /////
 
-                //Aer Lingus Web API
+                /////////////// Aer Lingus - Retrieve Flights ///////////////
+
                 HttpResponseMessage aerLingusResult;
                 string aerLingusContent;
 
@@ -73,13 +73,8 @@ namespace TravelAgent
                 //Add to empty list for display in grid
                 List<Flight> returnFlights = JsonConvert.DeserializeObject<List<Flight>>(aerLingusContent);
 
-                ///// Aer Lingus /////
 
-                // ---------------- //
-
-                /////  Ryanair   /////
-
-                //Ryanair Web API
+                ///////////////   Ryanair - Retrieve Flights  ///////////////
 
                 HttpResponseMessage ryanairResult;
                 string ryanairContent;
@@ -98,7 +93,8 @@ namespace TravelAgent
                 //add Ryanair flights to existing arrivals list (single list for both airlines)
                 returnFlights.AddRange(JsonConvert.DeserializeObject<List<Flight>>(ryanairContent));
 
-                /////  Ryanair   /////
+
+                ///////////////           Sort Lists          ///////////////
 
                 //sort list by departure date and bind to grid
                 List<Flight> sortedFlights = availableFlights.OrderBy(x => x.Departure).ToList();
@@ -109,26 +105,11 @@ namespace TravelAgent
                 dgvReturns.DataSource = sortedReturnFlights;
 
                 //cosmetics
-                dgvFlights.Columns[1].Width = 60;
-                dgvFlights.Columns[2].Width = 100;
-                dgvFlights.Columns[5].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                dgvFlights.Columns[3].Width = 200;
-                dgvFlights.Columns[4].Width = 200;
-                dgvFlights.Columns[5].Width = 100;
-                dgvFlights.Columns[5].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-                dgvFlights.Columns[5].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight;
-
-                dgvReturns.Columns[1].Width = 60;
-                dgvReturns.Columns[2].Width = 100;
-                dgvReturns.Columns[5].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                dgvReturns.Columns[3].Width = 200;
-                dgvReturns.Columns[4].Width = 200;
-                dgvReturns.Columns[5].Width = 100;
-                dgvReturns.Columns[5].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-                dgvReturns.Columns[5].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight;
+                SetCells();
             }
-            catch (Exception e)
+            catch (Exception e3)
             {
+                MessageBox.Show(e3.Message);
             }
         }
 
@@ -156,8 +137,9 @@ namespace TravelAgent
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception e2)
             {
+                MessageBox.Show(e2.Message);
             }
         }
 
@@ -178,37 +160,13 @@ namespace TravelAgent
                 string paymentRef = "";
 
                 //Assemble outward booking details
-                Booking outwardBooking = new Booking();
-                outwardBooking.ID = 0; //identity on DB
-                outwardBooking.Name = txtName.Text;
-                outwardBooking.Address1 = txtAddress1.Text;
-                outwardBooking.Phone = txtPhone.Text;
-                outwardBooking.Email = txtEmail.Text;
-                outwardBooking.FlightRef = selectedDepartureRef;
-                outwardBooking.Price = selectedDeparturePrice;
-                outwardBooking.PayRef = "";
+                Booking outwardBooking = AssembleBookingDetails();
 
                 //Assemble return booking details
-                Booking returnBooking = new Booking();
-                returnBooking.ID = 0; //identity on DB
-                returnBooking.Name = txtName.Text;
-                returnBooking.Address1 = txtAddress1.Text;
-                returnBooking.Phone = txtPhone.Text;
-                returnBooking.Email = txtEmail.Text;
-                returnBooking.FlightRef = selectedReturnRef;
-                returnBooking.Price = selectedReturnPrice;
-                returnBooking.PayRef = "";
+                Booking returnBooking = AssembleBookingDetails();
 
                 //Assemble payment details
-                Payment currentPayment = new Payment();
-                currentPayment.ID = 0; //identity on DB
-                currentPayment.Merchant = "Happy Travels";
-                currentPayment.Name = txtName.Text;
-                currentPayment.Card = txtCardNo.Text;
-                currentPayment.Expiry = txtExpiry.Text;
-                currentPayment.CVV = txtCVV.Text;
-                currentPayment.ExternalRef = selectedDepartureRef + " " + selectedReturnRef;
-                currentPayment.Price = selectedTotalPrice;
+                Payment currentPayment = AssemblePaymentDetails();
 
                 ////////////////////////////////////////////////////////////
                 //Step 1: Create Bookings on Carrier System (2 for a return trip) - without Authorization Code - holds the bookings temporarily - only confirmed when Payment Ref is added
@@ -229,7 +187,8 @@ namespace TravelAgent
                 }
 
                 outwardBookingRef = await bookingResponse.Content.ReadAsStringAsync(); //outwardBookingRef will contain newly created ID on Booking Record for outward flight
-                                                                                       //handling response/errors?
+
+                if (outwardBookingRef == "") { throw new HttpRequestException("Error: Failure making Outward Booking"); }
 
                 //Post Return Booking
                 byteContent = new ByteArrayContent(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(returnBooking)));
@@ -246,7 +205,8 @@ namespace TravelAgent
                 }
 
                 returnBookingRef = await bookingResponse.Content.ReadAsStringAsync(); //returnBookingRef will contain newly created ID on Booking Record for return flight
-                                                                                      //handling response/errors?
+
+                if (returnBookingRef == "") { throw new HttpRequestException("Error: Failure making Return Booking"); }
 
                 ////////////////////////////////////////////////////////////
                 //Step 2: Create Payment record on VISA - if transaction fails then Carrier Booking will expire. If transaction succeeds then Payment Ref can be passed back to Carrier to commit transaction
@@ -258,7 +218,8 @@ namespace TravelAgent
 
                 paymentResponse = await paymentClient.PostAsync("MakePayment/Post/", byteContent);
                 paymentRef = await paymentResponse.Content.ReadAsStringAsync(); //paymentRef will contain newly created ID on Payment Record
-                                                                                //handling response/errors?
+
+                if (paymentRef == "") { throw new HttpRequestException("Error: Failure making VISA Payment"); }
 
                 ////////////////////////////////////////////////////////////
                 //Step 3: Update Booking with Payment Ref (on Carrier System)
@@ -285,7 +246,8 @@ namespace TravelAgent
                     }
 
                     bookingResult = await bookingResponse.Content.ReadAsStringAsync();
-                    //handling response/errors?
+
+                    if (bookingResult == "") { throw new HttpRequestException("Error: Failure updating Outbound Booking with Payment Reference "); }
 
                     //Update Return Booking with Payment Ref
                     Confirmation returnConfirmation = new Confirmation();
@@ -306,20 +268,88 @@ namespace TravelAgent
                     }
 
                     bookingResult = await bookingResponse.Content.ReadAsStringAsync();
-                    //handling response/errors?
-                    if (paymentRef != "")
-                    {
-                        MessageBox.Show("Booking Successful");
 
-                    }
-                    else
-                    {
-                        MessageBox.Show("Error with Booking");
-                    }
+                    if (bookingResult == "") { throw new HttpRequestException("Error: Failure updating Return Booking with Payment Reference "); }
+                    
+                    MessageBox.Show(" Booking Successful ");
                 }
             }
-            catch (Exception e)
+            catch (HttpRequestException e10)
             {
+                MessageBox.Show(e10.Message);
+            }
+            catch (Exception e1)
+            {
+                MessageBox.Show(e1.Message);
+            }
+        }
+        private void SetCells()
+        {
+            try
+            {
+                dgvFlights.Columns[1].Width = 60;
+                dgvFlights.Columns[2].Width = 100;
+                dgvFlights.Columns[5].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                dgvFlights.Columns[3].Width = 200;
+                dgvFlights.Columns[4].Width = 200;
+                dgvFlights.Columns[5].Width = 100;
+                dgvFlights.Columns[5].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                dgvFlights.Columns[5].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight;
+
+                dgvReturns.Columns[1].Width = 60;
+                dgvReturns.Columns[2].Width = 100;
+                dgvReturns.Columns[5].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                dgvReturns.Columns[3].Width = 200;
+                dgvReturns.Columns[4].Width = 200;
+                dgvReturns.Columns[5].Width = 100;
+                dgvReturns.Columns[5].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                dgvReturns.Columns[5].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private Booking AssembleBookingDetails()
+        {
+            Booking newBooking = new Booking();
+            try
+            {
+                newBooking.ID = 0; //identity on DB
+                newBooking.Name = txtName.Text;
+                newBooking.Address1 = txtAddress1.Text;
+                newBooking.Phone = txtPhone.Text;
+                newBooking.Email = txtEmail.Text;
+                newBooking.FlightRef = selectedDepartureRef;
+                newBooking.Price = selectedDeparturePrice;
+                newBooking.PayRef = "";
+                return newBooking;
+            }
+            catch (Exception e4)
+            {
+                return newBooking;
+            }
+        }
+
+        private Payment AssemblePaymentDetails()
+        {
+            Payment newPayment = new Payment();
+            try
+            {
+                newPayment.ID = 0; //identity on DB
+                newPayment.Merchant = "Happy Travels";
+                newPayment.Name = txtName.Text;
+                newPayment.Card = txtCardNo.Text;
+                newPayment.Expiry = txtExpiry.Text;
+                newPayment.CVV = txtCVV.Text;
+                newPayment.ExternalRef = selectedDepartureRef + " " + selectedReturnRef;
+                newPayment.Price = selectedTotalPrice;
+                return newPayment;
+            }
+            catch (Exception e5)
+            {
+                return newPayment;
             }
         }
     }
