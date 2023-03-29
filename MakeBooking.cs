@@ -263,10 +263,10 @@ namespace TravelAgent
                 switch (selectedCarrier)
                 {
                     case "Aer Lingus":
-                        bookingResponse = await aerLingusClient.PostAsync("MakeBooking/Post/", byteContent);
+                        bookingResponse = await aerLingusClient.PostAsync("Confirmation/Post/", byteContent);
                         break;
                     default:
-                        bookingResponse = await ryanairClient.PostAsync("MakeBooking/Post/", byteContent);
+                        bookingResponse = await ryanairClient.PostAsync("Confirmation/Post/", byteContent);
                         break;
                 }
 
@@ -276,7 +276,7 @@ namespace TravelAgent
                 //Update Return Booking with Payment Ref
                 Confirmation returnConfirmation = new Confirmation();
                 Int32.TryParse(returnBookingRef, out returnRef);
-                returnConfirmation.BookingID = outwardRef;
+                returnConfirmation.BookingID = returnRef;
                 returnConfirmation.PayRef = "Ref: " + paymentRef;
                 byteContent = new ByteArrayContent(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(returnConfirmation)));
                 byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
@@ -284,10 +284,10 @@ namespace TravelAgent
                 switch (selectedCarrier)
                 {
                     case "Aer Lingus":
-                        bookingResponse = await aerLingusClient.PostAsync("MakeBooking/Post/", byteContent);
+                        bookingResponse = await aerLingusClient.PostAsync("Confirmation/Post/", byteContent);
                         break;
                     default:
-                        bookingResponse = await ryanairClient.PostAsync("MakeBooking/Post/", byteContent);
+                        bookingResponse = await ryanairClient.PostAsync("Confirmation/Post/", byteContent);
                         break;
                 }
 

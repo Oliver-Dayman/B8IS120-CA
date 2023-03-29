@@ -41,6 +41,11 @@ namespace TravelAgent
             this.panel2 = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
             this.pnlBookingDetails = new System.Windows.Forms.Panel();
+            this.txtEmail = new System.Windows.Forms.TextBox();
+            this.txtPhone = new System.Windows.Forms.TextBox();
+            this.txtAddress1 = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
             this.txtCVV = new System.Windows.Forms.TextBox();
@@ -56,11 +61,6 @@ namespace TravelAgent
             this.pnlBookingHeader = new System.Windows.Forms.Panel();
             this.label4 = new System.Windows.Forms.Label();
             this.btnSelectFlights = new System.Windows.Forms.Button();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.txtAddress1 = new System.Windows.Forms.TextBox();
-            this.txtPhone = new System.Windows.Forms.TextBox();
-            this.txtEmail = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvFlights)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvReturns)).BeginInit();
             this.panel1.SuspendLayout();
@@ -200,6 +200,48 @@ namespace TravelAgent
             this.pnlBookingDetails.Size = new System.Drawing.Size(593, 530);
             this.pnlBookingDetails.TabIndex = 10;
             // 
+            // txtEmail
+            // 
+            this.txtEmail.Location = new System.Drawing.Point(148, 410);
+            this.txtEmail.MaxLength = 25;
+            this.txtEmail.Name = "txtEmail";
+            this.txtEmail.Size = new System.Drawing.Size(350, 31);
+            this.txtEmail.TabIndex = 26;
+            // 
+            // txtPhone
+            // 
+            this.txtPhone.Location = new System.Drawing.Point(150, 346);
+            this.txtPhone.MaxLength = 15;
+            this.txtPhone.Name = "txtPhone";
+            this.txtPhone.Size = new System.Drawing.Size(150, 31);
+            this.txtPhone.TabIndex = 25;
+            // 
+            // txtAddress1
+            // 
+            this.txtAddress1.Location = new System.Drawing.Point(150, 284);
+            this.txtAddress1.MaxLength = 20;
+            this.txtAddress1.Name = "txtAddress1";
+            this.txtAddress1.Size = new System.Drawing.Size(348, 31);
+            this.txtAddress1.TabIndex = 24;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(34, 413);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(54, 25);
+            this.label11.TabIndex = 23;
+            this.label11.Text = "Email";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(34, 349);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(62, 25);
+            this.label10.TabIndex = 22;
+            this.label10.Text = "Phone";
+            // 
             // label9
             // 
             this.label9.AutoSize = true;
@@ -212,6 +254,7 @@ namespace TravelAgent
             // txtName
             // 
             this.txtName.Location = new System.Drawing.Point(150, 207);
+            this.txtName.MaxLength = 20;
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(348, 31);
             this.txtName.TabIndex = 20;
@@ -219,6 +262,7 @@ namespace TravelAgent
             // txtCVV
             // 
             this.txtCVV.Location = new System.Drawing.Point(406, 142);
+            this.txtCVV.MaxLength = 3;
             this.txtCVV.Name = "txtCVV";
             this.txtCVV.Size = new System.Drawing.Size(92, 31);
             this.txtCVV.TabIndex = 19;
@@ -226,6 +270,7 @@ namespace TravelAgent
             // txtExpiry
             // 
             this.txtExpiry.Location = new System.Drawing.Point(150, 142);
+            this.txtExpiry.MaxLength = 4;
             this.txtExpiry.Name = "txtExpiry";
             this.txtExpiry.Size = new System.Drawing.Size(110, 31);
             this.txtExpiry.TabIndex = 18;
@@ -233,6 +278,7 @@ namespace TravelAgent
             // txtCardNo
             // 
             this.txtCardNo.Location = new System.Drawing.Point(150, 83);
+            this.txtCardNo.MaxLength = 16;
             this.txtCardNo.Name = "txtCardNo";
             this.txtCardNo.Size = new System.Drawing.Size(348, 31);
             this.txtCardNo.TabIndex = 17;
@@ -329,45 +375,6 @@ namespace TravelAgent
             this.btnSelectFlights.Text = "Select Flights";
             this.btnSelectFlights.UseVisualStyleBackColor = true;
             this.btnSelectFlights.Click += new System.EventHandler(this.btnSelectFlights_Click);
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(34, 349);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(62, 25);
-            this.label10.TabIndex = 22;
-            this.label10.Text = "Phone";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(34, 413);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(54, 25);
-            this.label11.TabIndex = 23;
-            this.label11.Text = "Email";
-            // 
-            // txtAddress1
-            // 
-            this.txtAddress1.Location = new System.Drawing.Point(150, 284);
-            this.txtAddress1.Name = "txtAddress1";
-            this.txtAddress1.Size = new System.Drawing.Size(348, 31);
-            this.txtAddress1.TabIndex = 24;
-            // 
-            // txtPhone
-            // 
-            this.txtPhone.Location = new System.Drawing.Point(150, 346);
-            this.txtPhone.Name = "txtPhone";
-            this.txtPhone.Size = new System.Drawing.Size(150, 31);
-            this.txtPhone.TabIndex = 25;
-            // 
-            // txtEmail
-            // 
-            this.txtEmail.Location = new System.Drawing.Point(148, 410);
-            this.txtEmail.Name = "txtEmail";
-            this.txtEmail.Size = new System.Drawing.Size(350, 31);
-            this.txtEmail.TabIndex = 26;
             // 
             // MakeBooking
             // 
