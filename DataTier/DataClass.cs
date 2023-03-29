@@ -108,7 +108,7 @@ namespace AerLingus.DataTier
             }
 
             dataConnection.Close();
-            return "";
+            return bookingRef;
         }
         public string ConfirmBooking(Confirmation newConfirmation)
         {

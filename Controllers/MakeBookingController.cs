@@ -16,13 +16,13 @@ namespace AerLingus.Controllers
 
         // POST MakeBooking/Post
         [HttpPost]
-        public void Post([FromBody] JsonElement body)
+        public string Post([FromBody] JsonElement body)
         {
             myBusinessClass = new BusinessClass();
             string json = System.Text.Json.JsonSerializer.Serialize(body);
             Booking reqBooking = new Booking();
             reqBooking = JsonConvert.DeserializeObject<Booking>(json);
-            myBusinessClass.CreateBooking(reqBooking);
+            return myBusinessClass.CreateBooking(reqBooking);
         }
     }
 }
