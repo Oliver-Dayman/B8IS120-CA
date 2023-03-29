@@ -12,23 +12,39 @@ namespace AerLingus.Controllers
     public class ListFlightsController : ControllerBase
     {
         public BusinessClass myBusinessClass { get; set; }
-        
+
         // GET: ListFlights/Get
         [HttpGet]
         public List<Flight> Get()
         {
-            myBusinessClass = new BusinessClass();
-            List<Flight> availableFlights = myBusinessClass.GetFlights();
-            return availableFlights;
+            List<Flight> availableFlights = new List<Flight>();
+            try
+            {
+                myBusinessClass = new BusinessClass();
+                availableFlights = myBusinessClass.GetFlights();
+                return availableFlights;
+            }
+            catch (Exception e)
+            {
+                return availableFlights;
+            }
         }
 
         // GET ListFlights/Get/Date
         [HttpGet("{dt}")]
         public List<Flight> Get(string dt)
         {
-            myBusinessClass = new BusinessClass();
-            List<Flight> availableFlights = myBusinessClass.GetFlights(dt);
-            return availableFlights;
+            List<Flight> availableFlights = new List<Flight>();
+            try
+            {
+                myBusinessClass = new BusinessClass();
+                availableFlights = myBusinessClass.GetFlights(dt);
+                return availableFlights;
+            }
+            catch (Exception e)
+            {
+                return availableFlights;
+            }
         }
     }
 }

@@ -18,11 +18,16 @@ namespace AerLingus.Controllers
         [HttpPost]
         public void Post([FromBody] JsonElement body)
         {
-            myBusinessClass = new BusinessClass();
-            string json = System.Text.Json.JsonSerializer.Serialize(body);
-            Confirmation confirmBooking = new Confirmation();
-            confirmBooking = JsonConvert.DeserializeObject<Confirmation>(json);
-            myBusinessClass.UpdateBooking(confirmBooking);
+            try
+            {
+                myBusinessClass = new BusinessClass();
+                string json = System.Text.Json.JsonSerializer.Serialize(body);
+                Confirmation confirmBooking = new Confirmation();
+                confirmBooking = JsonConvert.DeserializeObject<Confirmation>(json);
+                myBusinessClass.UpdateBooking(confirmBooking);
+            }
+            catch (Exception e)
+            { }
         }
     }
 }

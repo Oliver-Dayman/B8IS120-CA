@@ -33,103 +33,136 @@ namespace AerLingus.DataTier
 
         public List<Flight> RetrieveFlights(string cmdText)
         {
-            dataConnection.Open();
-            SqlCommand dataCommand = new SqlCommand();
-            dataCommand.Connection = dataConnection;
-            dataCommand.CommandType = CommandType.Text;
-            dataCommand.CommandText = cmdText;
-
-            SqlDataReader dataReader = dataCommand.ExecuteReader();
-
             List<Flight> listFlights = new List<Flight>();
-            while (dataReader.Read())
+            try
             {
-                Flight flight = new Flight();
-                flight.Carrier = "Aer Lingus";
-                flight.ID = dataReader.GetInt32(0);
-                flight.Reference = dataReader.GetString(1);
-                flight.Departure = dataReader.GetDateTime(2);
-                flight.Arrival = dataReader.GetDateTime(3);
-                flight.Price = dataReader.GetDecimal(4);
-                listFlights.Add(flight);
-            }
-            dataReader.Close();
-            dataConnection.Close();
+                dataConnection.Open();
+                SqlCommand dataCommand = new SqlCommand();
+                dataCommand.Connection = dataConnection;
+                dataCommand.CommandType = CommandType.Text;
+                dataCommand.CommandText = cmdText;
 
-            return listFlights;
+                SqlDataReader dataReader = dataCommand.ExecuteReader();
+
+                while (dataReader.Read())
+                {
+                    Flight flight = new Flight();
+                    flight.Carrier = "Aer Lingus";
+                    flight.ID = dataReader.GetInt32(0);
+                    flight.Reference = dataReader.GetString(1);
+                    flight.Departure = dataReader.GetDateTime(2);
+                    flight.Arrival = dataReader.GetDateTime(3);
+                    flight.Price = dataReader.GetDecimal(4);
+                    listFlights.Add(flight);
+                }
+                dataReader.Close();
+
+                return listFlights;
+            }
+            catch (Exception e)
+            {
+                return listFlights;
+            }
+            finally
+            {
+                if (dataConnection != null)
+                { dataConnection.Close(); }
+            }
         }
 
         public string CreateBooking(Booking newBooking)
         {
-            dataConnection.Open();
-            SqlCommand dataCommand = new SqlCommand();
-            dataCommand.Connection = dataConnection;
-            dataCommand.CommandType = CommandType.Text;
-            dataCommand.CommandText = "INSERT INTO Bookings(Name, Address1, Phone, Email, FlightRef, Price, PayRef)" +
-                                        " VALUES(@Name, @Address, @Phone, @Email, @FlightRef, @Price, @Payref);SELECT SCOPE_IDENTITY();";
-
-            SqlParameter param1 = new SqlParameter("@Name", SqlDbType.NVarChar);
-            param1.Value = newBooking.Name;
-            dataCommand.Parameters.Add(param1);
-
-            SqlParameter param2 = new SqlParameter("@Address", SqlDbType.NVarChar);
-            param2.Value = newBooking.Address1;
-            dataCommand.Parameters.Add(param2);
-
-            SqlParameter param3 = new SqlParameter("@Phone", SqlDbType.NVarChar);
-            param3.Value = newBooking.Phone;
-            dataCommand.Parameters.Add(param3);
-
-            SqlParameter param4 = new SqlParameter("@Email", SqlDbType.NVarChar);
-            param4.Value = newBooking.Email;
-            dataCommand.Parameters.Add(param4);
-
-            SqlParameter param5 = new SqlParameter("@FlightRef", SqlDbType.NVarChar);
-            param5.Value = newBooking.FlightRef;
-            dataCommand.Parameters.Add(param5);
-
-            SqlParameter param6 = new SqlParameter("@Price", SqlDbType.Decimal);
-            param6.Value = newBooking.Price;
-            dataCommand.Parameters.Add(param6);
-
-            SqlParameter param7 = new SqlParameter("@Payref", SqlDbType.NVarChar);
-            param7.Value = newBooking.PayRef;
-            dataCommand.Parameters.Add(param7);
-
-            SqlParameter param8 = new SqlParameter("@ID", SqlDbType.Int, 0, "ID");
-            param8.Direction = ParameterDirection.Output;
-            dataCommand.Parameters.Add(param8);
-
-            string bookingRef = "";
-            object retObject = dataCommand.ExecuteScalar();
-            if (retObject != null)
+            try
             {
-                bookingRef = retObject.ToString();
-            }
+                dataConnection.Open();
+                SqlCommand dataCommand = new SqlCommand();
+                dataCommand.Connection = dataConnection;
+                dataCommand.CommandType = CommandType.Text;
+                dataCommand.CommandText = "INSERT INTO Bookings(Name, Address1, Phone, Email, FlightRef, Price, PayRef)" +
+                                            " VALUES(@Name, @Address, @Phone, @Email, @FlightRef, @Price, @Payref);SELECT SCOPE_IDENTITY();";
 
-            dataConnection.Close();
-            return bookingRef;
+                SqlParameter param1 = new SqlParameter("@Name", SqlDbType.NVarChar);
+                param1.Value = newBooking.Name;
+                dataCommand.Parameters.Add(param1);
+
+                SqlParameter param2 = new SqlParameter("@Address", SqlDbType.NVarChar);
+                param2.Value = newBooking.Address1;
+                dataCommand.Parameters.Add(param2);
+
+                SqlParameter param3 = new SqlParameter("@Phone", SqlDbType.NVarChar);
+                param3.Value = newBooking.Phone;
+                dataCommand.Parameters.Add(param3);
+
+                SqlParameter param4 = new SqlParameter("@Email", SqlDbType.NVarChar);
+                param4.Value = newBooking.Email;
+                dataCommand.Parameters.Add(param4);
+
+                SqlParameter param5 = new SqlParameter("@FlightRef", SqlDbType.NVarChar);
+                param5.Value = newBooking.FlightRef;
+                dataCommand.Parameters.Add(param5);
+
+                SqlParameter param6 = new SqlParameter("@Price", SqlDbType.Decimal);
+                param6.Value = newBooking.Price;
+                dataCommand.Parameters.Add(param6);
+
+                SqlParameter param7 = new SqlParameter("@Payref", SqlDbType.NVarChar);
+                param7.Value = newBooking.PayRef;
+                dataCommand.Parameters.Add(param7);
+
+                SqlParameter param8 = new SqlParameter("@ID", SqlDbType.Int, 0, "ID");
+                param8.Direction = ParameterDirection.Output;
+                dataCommand.Parameters.Add(param8);
+
+                string bookingRef = "";
+                object retObject = dataCommand.ExecuteScalar();
+                if (retObject != null)
+                {
+                    bookingRef = retObject.ToString();
+                }
+
+                return bookingRef;
+            }
+            catch (Exception e)
+            {
+                return "";
+            }
+            finally
+            {
+                if (dataConnection != null)
+                { dataConnection.Close(); }
+            }
         }
         public string ConfirmBooking(Confirmation newConfirmation)
         {
-            dataConnection.Open();
-            SqlCommand dataCommand = new SqlCommand();
-            dataCommand.Connection = dataConnection;
-            dataCommand.CommandType = CommandType.Text;
-            dataCommand.CommandText = "UPDATE Bookings SET PayRef = @PayRef WHERE ID = @ID";
+            try
+            {
+                dataConnection.Open();
+                SqlCommand dataCommand = new SqlCommand();
+                dataCommand.Connection = dataConnection;
+                dataCommand.CommandType = CommandType.Text;
+                dataCommand.CommandText = "UPDATE Bookings SET PayRef = @PayRef WHERE ID = @ID";
 
-            SqlParameter param1 = new SqlParameter("@PayRef", SqlDbType.NVarChar);
-            param1.Value = newConfirmation.PayRef;
-            dataCommand.Parameters.Add(param1);
+                SqlParameter param1 = new SqlParameter("@PayRef", SqlDbType.NVarChar);
+                param1.Value = newConfirmation.PayRef;
+                dataCommand.Parameters.Add(param1);
 
-            SqlParameter param2 = new SqlParameter("@ID", SqlDbType.Int);
-            param2.Value = newConfirmation.BookingID;
-            dataCommand.Parameters.Add(param2);
+                SqlParameter param2 = new SqlParameter("@ID", SqlDbType.Int);
+                param2.Value = newConfirmation.BookingID;
+                dataCommand.Parameters.Add(param2);
 
-            dataCommand.ExecuteNonQuery();
+                dataCommand.ExecuteNonQuery();
 
-            dataConnection.Close();
-            return "";
+                return "";
+            }
+            catch (Exception e)
+            {                
+                return "";
+            }
+            finally
+            {
+                if (dataConnection != null)
+                { dataConnection.Close(); }
+            }
         }
     }
 }
