@@ -27,6 +27,9 @@ The databases were Air Lingus flights, RyanAir flights, and the VISA payment dat
 The windows form app was the Main project. It includes all the visual components that are used.
 The 3 asp.net web APIs are used for a database each. 
 
+My distributed system utilises HTTPS (Hypertext Transfer Protocol Secure) to ensure that all communication is encrypted and secure. 
+All data exchanged between the client and the server is protected by SSL/TLS encryption, which prevents the data from being accessed or tampered by unauthorised parties.   
+
 My analysis of this distributed system is that it includes many of the properties of a distributed system. Mainly Concurrency, Process Scheduling, Scalability, and Latency.
 
 Concurrency & process Scheduling is being used because the web services are being called Asynchronously. This is done using async and await commands.
