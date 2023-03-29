@@ -161,9 +161,13 @@ namespace TravelAgent
 
                 //Assemble outward booking details
                 Booking outwardBooking = AssembleBookingDetails();
+                outwardBooking.FlightRef = selectedDepartureRef;
+                outwardBooking.Price = selectedDeparturePrice;
 
                 //Assemble return booking details
                 Booking returnBooking = AssembleBookingDetails();
+                returnBooking.FlightRef = selectedReturnRef;
+                returnBooking.Price = selectedReturnPrice;
 
                 //Assemble payment details
                 Payment currentPayment = AssemblePaymentDetails();
@@ -282,6 +286,10 @@ namespace TravelAgent
             {
                 MessageBox.Show(e1.Message);
             }
+            finally
+            {
+                ClearScreen();
+            }
         }
         private void SetCells()
         {
@@ -321,8 +329,6 @@ namespace TravelAgent
                 newBooking.Address1 = txtAddress1.Text;
                 newBooking.Phone = txtPhone.Text;
                 newBooking.Email = txtEmail.Text;
-                newBooking.FlightRef = selectedDepartureRef;
-                newBooking.Price = selectedDeparturePrice;
                 newBooking.PayRef = "";
                 return newBooking;
             }
@@ -351,6 +357,21 @@ namespace TravelAgent
             {
                 return newPayment;
             }
+        }
+
+        private void ClearScreen()
+        {
+            txtPrice.Text = "";
+            txtName.Text = "";
+            txtCardNo.Text = "";
+            txtExpiry.Text = "";
+            txtCVV.Text = "";
+            txtAddress1.Text = "";
+            txtPhone.Text = "";
+            txtEmail.Text = "";
+
+            pnlBookingHeader.Visible = false;
+            pnlBookingDetails.Visible = false;
         }
     }
 }
