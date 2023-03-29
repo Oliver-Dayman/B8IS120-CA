@@ -18,11 +18,18 @@ namespace VISA.Controllers
         [HttpPost]
         public string Post([FromBody] JsonElement body)
         {
-            myBusinessClass = new BusinessClass();
-            string json = System.Text.Json.JsonSerializer.Serialize(body);
-            Payment reqPayment = new Payment();
-            reqPayment = JsonConvert.DeserializeObject<Payment>(json);
-            return myBusinessClass.CreatePayment(reqPayment);
+            try
+            {
+                myBusinessClass = new BusinessClass();
+                string json = System.Text.Json.JsonSerializer.Serialize(body);
+                Payment reqPayment = new Payment();
+                reqPayment = JsonConvert.DeserializeObject<Payment>(json);
+                return myBusinessClass.CreatePayment(reqPayment);
+            }
+            catch (Exception e)
+            {
+                return "";
+            }
         }
     }
 }
