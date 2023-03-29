@@ -152,7 +152,7 @@ namespace AerLingus.DataTier
 
                 dataCommand.ExecuteNonQuery();
 
-                return "";
+                return "ok";
             }
             catch (Exception e)
             {                
