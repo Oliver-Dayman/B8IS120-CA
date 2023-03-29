@@ -152,7 +152,7 @@ namespace Ryanair.DataTier
 
                 dataCommand.ExecuteNonQuery();
 
-                return "";
+                return "ok";
             }
             catch (Exception e)
             {

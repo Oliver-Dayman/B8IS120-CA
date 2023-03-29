@@ -16,7 +16,7 @@ namespace Ryanair.Controllers
 
         // POST Confirmation/Post
         [HttpPost]
-        public void Post([FromBody] JsonElement body)
+        public string Post([FromBody] JsonElement body)
         {
             try
             {
@@ -24,10 +24,11 @@ namespace Ryanair.Controllers
                 string json = System.Text.Json.JsonSerializer.Serialize(body);
                 Confirmation confirmBooking = new Confirmation();
                 confirmBooking = JsonConvert.DeserializeObject<Confirmation>(json);
-                myBusinessClass.UpdateBooking(confirmBooking);
+                return myBusinessClass.UpdateBooking(confirmBooking);
             }
             catch (Exception e)
             {
+                return "";
             }
         }
     }
