@@ -1,10 +1,10 @@
-For This Assignment I decided to Create A Distributed system on the flights booking of Ryanair and Aer Lingus. I decided to do an Airport Booking form because having a distributed system will allow users to seamlessly book flights with multiple airlines and pay using their preferred payment method. This creates a more convenient
-booking process for users.
+For This Assignment I decided to Create A Distributed system on the Travel Agent of Ryanair and Aer Lingus. I decided to do an Travel agent Booking form because having a distributed system will allow users to seamlessly book flights with multiple airlines and pay using their preferred payment method. 
+This creates a more convenient booking process for users.
 
 There are a number of reasons why you would use a distributed approach when building a system - some of these concepts are visible in this project. 
 
 The system is designed as a single client application that interacts with a number of distributed web services. I decided to design the distributed system by using 3 Databases in Sql Server, and 4 C# .Net projects. 
-- The databases were Air Lingus flights/booking, RyanAir flights/booking, and the VISA payment database. 
+- The databases were Aer Lingus flights/booking, Ryanair flights/booking, and the VISA payment database. 
 - The projects were 1 Windows Forms app, and 3 ASP.Net Core Web API's - one for each of the databases.
 
 The windows form app was the Main project. It includes all the visual components that are used.
